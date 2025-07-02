@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Today's Devotional - FaithConnect{% endblock %}
+
+{% block content %}
+{% if devotional %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card devotional-card">
+            <div class="card-header text-center">
+                <h3><i class="fas fa-book-open"></i> {{ devotional.title }}</h3>
+                <p class="mb-0 text-muted">{{ devotional.date.strftime('%A, %B %d, %Y') }}</p>
+                {% if devotional.author %}
+                <small class="text-muted">by {{ devotional.author }}</small>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if devotional.scripture_reference %}
+                <div class="text-center mb-4">
+                    <h5 class="text-primary">{{ devotional.scripture_reference }}</h5>
+                    {% if devotional.scripture_text %}
+                    <blockquote class="blockquote">
+                        <p class="mb-0 fst-italic">"{{ devotional.scripture_text }}"</p>
+                    </blockquote>
+                    {% endif %}
+                </div>
+                <hr>
+                {% endif %}
+
+                <div class="devotional-content">
+                    {% for paragraph in devotional.content.split('\n\n') %}
+                        <p>{{ paragraph }}</p>
+                    {% endfor %}
+                </div>
+
+                {% if devotional.reflection_questions %}
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-info">
+                        <i class="fas fa-question-circle"></i> Reflection Questions
+                    </h6>
+                    <p class="mb-0">{{ devotional.reflection_questions }}</p>
+                </div>
+                {% endif %}
+
+                {% if devotional.prayer_points %}
+                <div class="mt-3 p-3 bg-light rounded">
+                    <h6 class="text-success">
+                        <i class="fas fa-praying-hands"></i> Prayer Points
+                    </h6>
+                    <p class="mb-0">{{ devotional.prayer_points }}</p>
+                </div>
+                {% endif %}
+
+                <div class="mt-4 text-center">
+                    <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#personalReflectionModal">
+                        <i class="fas fa-journal-whills"></i> Add Personal Reflection
+                    </button>
+                    <button class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#prayerModal">
+                        <i class="fas fa-plus"></i> Add Prayer Request
+                    </button>
+                    <button class="btn btn-outline-info" onclick="shareDevotion()">
+                        <i class="fas fa-share"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-comments"></i> Community Reflections</h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-3 text-muted">
+                    <i class="fas fa-users fa-2x"></i>
+                    <p class="mt-2">Share your thoughts and learn from other believers' insights on today's devotional.</p>
+                    <small>Feature coming soon - community discussions and shared reflections</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Personal Reflection Modal -->
+<div class="modal fade" id="personalReflectionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-journal-whills"></i> Personal Reflection
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="#">
+                    <div class="mb-3">
+                        <label for="reflection" class="form-label">What spoke to you in today's devotional?</label>
+                        <textarea class="form-control" id="reflection" name="reflection" rows="4" 
+                                  placeholder="Share your thoughts, insights, or how God is speaking to you through today's message..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="application" class="form-label">How will you apply this to your life?</label>
+                        <textarea class="form-control" id="application" name="application" rows="3"
+                                  placeholder="What practical steps will you take based on today's devotional?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="share_reflection">
+                            <label class="form-check-label" for="share_reflection">
+                                Share this reflection with the community (optional)
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Reflection
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Prayer Modal -->
+<div class="modal fade" id="prayerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-praying-hands"></i> Add Prayer Request
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_prayer') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="prayer_title" class="form-label">Prayer Title</label>
+                        <input type="text" class="form-control" id="prayer_title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prayer_content" class="form-label">Prayer Request</label>
+                        <textarea class="form-control" id="prayer_content" name="content" rows="3" required></textarea>
+                    </div>
+                    <input type="hidden" name="prayer_type" value="personal">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Prayer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
+                <h4>No Devotional Available</h4>
+                <p class="text-muted">Check back tomorrow for fresh spiritual content, or explore our devotional archive.</p>
+                <div class="mt-4">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-home"></i> Back to Dashboard
+                    </a>
+                    <button class="btn btn-outline-info">
+                        <i class="fas fa-archive"></i> Browse Archive
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function shareDevotion() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Today\'s Devotional - FaithConnect',
+            text: 'Check out today\'s inspiring devotional on FaithConnect',
+            url: window.location.href
+        }).then(() => {
+            console.log('Successfully shared');
+        }).catch((error) => {
+            console.log('Error sharing:', error);
+            fallbackShare();
+        });
+    } else {
+        fallbackShare();
+    }
+}
+
+function fallbackShare() {
+    // Copy URL to clipboard
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copied to clipboard!');
+    }).catch(() => {
+        alert('Unable to copy link. Please copy the URL from your browser.');
+    });
+}
+</script>
+{% endblock %}

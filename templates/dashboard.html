@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FaithConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>Welcome back, {{ current_user.username }}!</h2>
+        <p class="text-muted">Continue your faith journey today</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        {% if devotional %}
+        <div class="card devotional-card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-book-open"></i> Today's Devotional</h5>
+            </div>
+            <div class="card-body">
+                <h6>{{ devotional.title }}</h6>
+                {% if devotional.scripture_reference %}
+                <p class="text-muted"><strong>{{ devotional.scripture_reference }}</strong></p>
+                {% endif %}
+                {% if devotional.scripture_text %}
+                <blockquote class="blockquote">
+                    <p class="mb-0">"{{ devotional.scripture_text }}"</p>
+                </blockquote>
+                {% endif %}
+                <p>{{ devotional.content[:200] }}{% if devotional.content|length > 200 %}...{% endif %}</p>
+                <a href="#" class="btn btn-sm btn-success">Read Full Devotional</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="card devotional-card mb-4">
+            <div class="card-body text-center">
+                <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                <h5>No devotional available today</h5>
+                <p class="text-muted">Check back tomorrow for fresh spiritual content</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card prayer-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-praying-hands"></i> Recent Prayers</h5>
+                <a href="{{ url_for('prayers') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if prayers %}
+                    {% for prayer in prayers %}
+                    <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                        <div>
+                            <h6 class="mb-1">{{ prayer.title }}</h6>
+                            <p class="mb-1 text-muted small">{{ prayer.content[:100] }}{% if prayer.content|length > 100 %}...{% endif %}</p>
+                            <small class="text-muted">{{ prayer.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                        {% if prayer.is_answered %}
+                        <span class="badge bg-success">Answered</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-praying-hands fa-3x text-muted"></i>
+                    <p class="mt-3">No prayers yet. Start your prayer journey today!</p>
+                    <a href="{{ url_for('prayers') }}" class="btn btn-primary">Add Your First Prayer</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-calendar-day"></i> Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('prayers') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-plus"></i> Add Prayer Request
+                    </a>
+                    <a href="#" class="btn btn-outline-success">
+                        <i class="fas fa-check"></i> Mark Prayer Answered
+                    </a>
+                    <a href="{{ url_for('community') }}" class="btn btn-outline-info">
+                        <i class="fas fa-users"></i> Find Local Community
+                    </a>
+                    <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-user-edit"></i> Update Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-chart-line"></i> Your Faith Journey</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h4 class="text-primary">{{ prayers|length }}</h4>
+                        <small class="text-muted">Total Prayers</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">{{ prayers|selectattr('is_answered')|list|length }}</h4>
+                        <small class="text-muted">Answered Prayers</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <small class="text-muted">Member since {{ current_user.created_at.strftime('%B %Y') }}</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card community-card">
+            <div class="card-header">
+                <h6><i class="fas fa-heart"></i> Daily Verse</h6>
+            </div>
+            <div class="card-body text-center">
+                <blockquote class="blockquote">
+                    <p class="mb-0">"For I know the plans I have for you," declares the Lord, "plans to prosper you and not to harm you, to give you hope and a future."</p>
+                    <footer class="blockquote-footer mt-2">
+                        <strong>Jeremiah 29:11</strong>
+                    </footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

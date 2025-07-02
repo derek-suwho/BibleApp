@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Community - FaithConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-users"></i> Christian Community</h2>
+        <p class="text-muted">Connect with believers in your area and join local faith communities</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-map-marker-alt"></i> Nearby Christians</h5>
+                    <button class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-search"></i> Find More
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if users %}
+                    <div class="row">
+                        {% for user in users %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                             style="width: 50px; height: 50px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ user.username }}</h6>
+                                            <small class="text-muted">
+                                                <i class="fas fa-calendar"></i> 
+                                                Joined {{ user.created_at.strftime('%B %Y') }}
+                                            </small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-user-plus"></i> Connect
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-muted"></i>
+                    <p class="mt-3">No nearby Christians found yet.</p>
+                    <p class="text-muted">Update your location in your profile to connect with local believers.</p>
+                    <a href="{{ url_for('profile') }}" class="btn btn-primary">Update Profile</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-church"></i> Local Communities & Groups</h5>
+                    <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#createCommunityModal">
+                        <i class="fas fa-plus"></i> Create Group
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if communities %}
+                    {% for community in communities %}
+                    <div class="card community-card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="card-title">{{ community.name }}</h6>
+                                    <p class="card-text">{{ community.description }}</p>
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        <small>{{ community.city }}, {{ community.state }}</small>
+                                    </div>
+                                    {% if community.meeting_day and community.meeting_time %}
+                                    <div class="d-flex align-items-center text-muted mb-2">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <small>{{ community.meeting_day }}s at {{ community.meeting_time.strftime('%I:%M %p') }}</small>
+                                    </div>
+                                    {% endif %}
+                                    <div class="d-flex align-items-center text-muted">
+                                        <i class="fas fa-users me-2"></i>
+                                        <small>{{ community.members|length }} members</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button class="btn btn-sm btn-outline-success mb-2">
+                                        <i class="fas fa-user-plus"></i> Join
+                                    </button>
+                                    <br>
+                                    <small class="text-muted">{{ community.community_type.title() }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-church fa-3x text-muted"></i>
+                    <p class="mt-3">No local communities found yet.</p>
+                    <p class="text-muted">Be the first to create a community group in your area!</p>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createCommunityModal">
+                        <i class="fas fa-plus"></i> Create First Community
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-search"></i> Find Community</h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" placeholder="City, State">
+                    </div>
+                    <div class="mb-3">
+                        <label for="communityType" class="form-label">Community Type</label>
+                        <select class="form-select" id="communityType">
+                            <option value="">All Types</option>
+                            <option value="bible_study">Bible Study</option>
+                            <option value="prayer_group">Prayer Group</option>
+                            <option value="youth_group">Youth Group</option>
+                            <option value="mens_ministry">Men's Ministry</option>
+                            <option value="womens_ministry">Women's Ministry</option>
+                            <option value="small_group">Small Group</option>
+                            <option value="service_ministry">Service Ministry</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="distance" class="form-label">Distance</label>
+                        <select class="form-select" id="distance">
+                            <option value="5">Within 5 miles</option>
+                            <option value="10">Within 10 miles</option>
+                            <option value="25">Within 25 miles</option>
+                            <option value="50">Within 50 miles</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-church"></i> Local Churches</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">Find churches in your area</p>
+                <div class="d-grid">
+                    <a href="{{ url_for('churches') }}" class="btn btn-outline-info">
+                        <i class="fas fa-map-marker-alt"></i> Browse Local Churches
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-hands-helping"></i> Community Guidelines</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li class="mb-2">
+                        <i class="fas fa-heart text-danger"></i>
+                        Show Christian love and respect
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-shield-alt text-primary"></i>
+                        Keep discussions Biblical and edifying
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-user-shield text-success"></i>
+                        Respect privacy and confidentiality
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-praying-hands text-info"></i>
+                        Support and pray for one another
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createCommunityModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus"></i> Create Community Group
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="#">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Community Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select class="form-select" id="type" name="community_type" required>
+                                    <option value="bible_study">Bible Study</option>
+                                    <option value="prayer_group">Prayer Group</option>
+                                    <option value="small_group">Small Group</option>
+                                    <option value="youth_group">Youth Group</option>
+                                    <option value="mens_ministry">Men's Ministry</option>
+                                    <option value="womens_ministry">Women's Ministry</option>
+                                    <option value="service_ministry">Service Ministry</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="meeting_day" class="form-label">Meeting Day</label>
+                                <select class="form-select" id="meeting_day" name="meeting_day">
+                                    <option value="">Select Day</option>
+                                    <option value="Sunday">Sunday</option>
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="meeting_time" class="form-label">Meeting Time</label>
+                                <input type="time" class="form-control" id="meeting_time" name="meeting_time">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Create Community
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

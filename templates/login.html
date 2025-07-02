@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Login - FaithConnect{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3><i class="fas fa-sign-in-alt"></i> Welcome Back</h3>
+                <p class="mb-0 text-muted">Sign in to continue your faith journey</p>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </button>
+                    </div>
+                </form>
+                
+                <hr>
+                <div class="text-center">
+                    <p><a href="#" class="text-muted">Forgot your password?</a></p>
+                    <p>New to FaithConnect? <a href="{{ url_for('register') }}">Create an account</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <small class="text-muted">
+                        <i class="fas fa-quote-left"></i>
+                        "As iron sharpens iron, so one person sharpens another."
+                        <br><strong>Proverbs 27:17</strong>
+                        <i class="fas fa-quote-right"></i>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

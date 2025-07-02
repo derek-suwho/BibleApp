@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Local Churches - FaithConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-church"></i> Local Churches</h2>
+        <p class="text-muted">Find churches in your area and connect with local congregations</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        {% if churches %}
+            {% for church in churches %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="card-title">{{ church.name }}</h5>
+                            {% if church.denomination %}
+                            <p class="text-muted mb-2">
+                                <span class="badge bg-secondary">{{ church.denomination }}</span>
+                            </p>
+                            {% endif %}
+                            
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt text-primary"></i>
+                                <small>
+                                    {{ church.address }}<br>
+                                    {{ church.city }}, {{ church.state }} {{ church.zip_code }}
+                                </small>
+                            </div>
+                            
+                            {% if church.phone %}
+                            <div class="mb-2">
+                                <i class="fas fa-phone text-success"></i>
+                                <small><a href="tel:{{ church.phone }}">{{ church.phone }}</a></small>
+                            </div>
+                            {% endif %}
+                            
+                            {% if church.email %}
+                            <div class="mb-2">
+                                <i class="fas fa-envelope text-info"></i>
+                                <small><a href="mailto:{{ church.email }}">{{ church.email }}</a></small>
+                            </div>
+                            {% endif %}
+                            
+                            {% if church.website %}
+                            <div class="mb-2">
+                                <i class="fas fa-globe text-warning"></i>
+                                <small><a href="{{ church.website }}" target="_blank">{{ church.website }}</a></small>
+                            </div>
+                            {% endif %}
+                            
+                            {% if church.pastor_name %}
+                            <div class="mb-2">
+                                <i class="fas fa-user text-secondary"></i>
+                                <small><strong>Pastor:</strong> {{ church.pastor_name }}</small>
+                            </div>
+                            {% endif %}
+                            
+                            {% if church.service_times %}
+                            <div class="mb-2">
+                                <i class="fas fa-clock text-primary"></i>
+                                <small><strong>Service Times:</strong> {{ church.service_times }}</small>
+                            </div>
+                            {% endif %}
+                            
+                            {% if church.description %}
+                            <p class="card-text mt-3">{{ church.description }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 text-center">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-directions"></i> Get Directions
+                                </button>
+                                <button class="btn btn-outline-success">
+                                    <i class="fas fa-heart"></i> Save Church
+                                </button>
+                                <button class="btn btn-outline-info">
+                                    <i class="fas fa-share"></i> Share
+                                </button>
+                            </div>
+                            
+                            {% if church.website %}
+                            <div class="mt-3">
+                                <a href="{{ church.website }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-external-link-alt"></i> Visit Website
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-church fa-4x text-muted mb-3"></i>
+                <h4>No Churches Found</h4>
+                <p class="text-muted">We're working to add more churches to our directory. Check back soon!</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#suggestChurchModal">
+                    <i class="fas fa-plus"></i> Suggest a Church
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-filter"></i> Filter Churches</h6>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="denomination" class="form-label">Denomination</label>
+                        <select class="form-select" id="denomination">
+                            <option value="">All Denominations</option>
+                            <option value="Baptist">Baptist</option>
+                            <option value="Methodist">Methodist</option>
+                            <option value="Presbyterian">Presbyterian</option>
+                            <option value="Pentecostal">Pentecostal</option>
+                            <option value="Lutheran">Lutheran</option>
+                            <option value="Episcopal">Episcopal</option>
+                            <option value="Catholic">Catholic</option>
+                            <option value="Non-denominational">Non-denominational</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" placeholder="Enter city name">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="distance" class="form-label">Distance</label>
+                        <select class="form-select" id="distance">
+                            <option value="5">Within 5 miles</option>
+                            <option value="10">Within 10 miles</option>
+                            <option value="25">Within 25 miles</option>
+                            <option value="50">Within 50 miles</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search Churches
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-info-circle"></i> Church Directory</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted">
+                    Our church directory helps you find local congregations that align with your faith and values. 
+                    Each listing includes contact information, service times, and church details.
+                </p>
+                <div class="d-grid">
+                    <button class="btn btn-outline-primary btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#suggestChurchModal">
+                        <i class="fas fa-plus"></i> Add Your Church
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-question"></i> Need Help?
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-lightbulb"></i> Finding a Church</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Consider your denominational preferences
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Look for Bible-centered teaching
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Find a community that feels like home
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Visit several churches before deciding
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Suggest Church Modal -->
+<div class="modal fade" id="suggestChurchModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus"></i> Suggest a Church
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="#">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="church_name" class="form-label">Church Name</label>
+                                <input type="text" class="form-control" id="church_name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="church_denomination" class="form-label">Denomination</label>
+                                <select class="form-select" id="church_denomination" name="denomination">
+                                    <option value="">Select</option>
+                                    <option value="Baptist">Baptist</option>
+                                    <option value="Methodist">Methodist</option>
+                                    <option value="Presbyterian">Presbyterian</option>
+                                    <option value="Pentecostal">Pentecostal</option>
+                                    <option value="Lutheran">Lutheran</option>
+                                    <option value="Episcopal">Episcopal</option>
+                                    <option value="Catholic">Catholic</option>
+                                    <option value="Non-denominational">Non-denominational</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="church_address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="church_address" name="address" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="church_city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="church_city" name="city" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="church_state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="church_state" name="state" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="church_phone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="church_phone" name="phone">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="church_website" class="form-label">Website</label>
+                                <input type="url" class="form-control" id="church_website" name="website">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="church_description" class="form-label">Description</label>
+                        <textarea class="form-control" id="church_description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Submit Suggestion
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

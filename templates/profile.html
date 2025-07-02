@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - FaithConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user-edit"></i> My Profile</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="{{ profile.first_name if profile else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name"
+                                       value="{{ profile.last_name if profile else '' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Bio</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="3" 
+                                  placeholder="Tell us about your faith journey...">{{ profile.bio if profile else '' }}</textarea>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-church"></i> Faith Information
+                    </h6>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="church_name" class="form-label">Church Name</label>
+                                <input type="text" class="form-control" id="church_name" name="church_name"
+                                       value="{{ profile.church_name if profile else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="denomination" class="form-label">Denomination</label>
+                                <select class="form-select" id="denomination" name="denomination">
+                                    <option value="">Select Denomination</option>
+                                    <option value="Baptist" {{ 'selected' if profile and profile.denomination == 'Baptist' else '' }}>Baptist</option>
+                                    <option value="Methodist" {{ 'selected' if profile and profile.denomination == 'Methodist' else '' }}>Methodist</option>
+                                    <option value="Presbyterian" {{ 'selected' if profile and profile.denomination == 'Presbyterian' else '' }}>Presbyterian</option>
+                                    <option value="Pentecostal" {{ 'selected' if profile and profile.denomination == 'Pentecostal' else '' }}>Pentecostal</option>
+                                    <option value="Lutheran" {{ 'selected' if profile and profile.denomination == 'Lutheran' else '' }}>Lutheran</option>
+                                    <option value="Episcopal" {{ 'selected' if profile and profile.denomination == 'Episcopal' else '' }}>Episcopal</option>
+                                    <option value="Catholic" {{ 'selected' if profile and profile.denomination == 'Catholic' else '' }}>Catholic</option>
+                                    <option value="Non-denominational" {{ 'selected' if profile and profile.denomination == 'Non-denominational' else '' }}>Non-denominational</option>
+                                    <option value="Other" {{ 'selected' if profile and profile.denomination == 'Other' else '' }}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="favorite_verse" class="form-label">Favorite Bible Verse</label>
+                        <input type="text" class="form-control" id="favorite_verse" name="favorite_verse"
+                               placeholder="e.g., John 3:16"
+                               value="{{ profile.favorite_verse if profile else '' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="spiritual_gifts" class="form-label">Spiritual Gifts</label>
+                        <input type="text" class="form-control" id="spiritual_gifts" name="spiritual_gifts"
+                               placeholder="e.g., Teaching, Encouragement, Leadership"
+                               value="{{ profile.spiritual_gifts if profile else '' }}">
+                        <div class="form-text">Separate multiple gifts with commas</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="ministry_interests" class="form-label">Ministry Interests</label>
+                        <input type="text" class="form-control" id="ministry_interests" name="ministry_interests"
+                               placeholder="e.g., Youth Ministry, Missions, Worship"
+                               value="{{ profile.ministry_interests if profile else '' }}">
+                        <div class="form-text">Separate multiple interests with commas</div>
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-map-marker-alt"></i> Location
+                    </h6>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city"
+                                       value="{{ profile.city if profile else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state"
+                                       value="{{ profile.state if profile else '' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" 
+                               value="{{ profile.country if profile else 'United States' }}">
+                    </div>
+
+                    <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-handshake"></i> Mentorship
+                    </h6>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="availability_for_mentoring" 
+                                       name="availability_for_mentoring" 
+                                       {{ 'checked' if profile and profile.availability_for_mentoring else '' }}>
+                                <label class="form-check-label" for="availability_for_mentoring">
+                                    Available to mentor others
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="looking_for_mentor" 
+                                       name="looking_for_mentor"
+                                       {{ 'checked' if profile and profile.looking_for_mentor else '' }}>
+                                <label class="form-check-label" for="looking_for_mentor">
+                                    Looking for a mentor
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Profile
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-user"></i> Account Information</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Username:</strong> {{ current_user.username }}</p>
+                <p><strong>Email:</strong> {{ current_user.email }}</p>
+                <p><strong>Member Since:</strong> {{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                <hr>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-cog"></i> Privacy Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6><i class="fas fa-shield-alt"></i> Privacy & Safety</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="profile_visibility" checked>
+                    <label class="form-check-label" for="profile_visibility">
+                        Make profile visible to other users
+                    </label>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="location_sharing" checked>
+                    <label class="form-check-label" for="location_sharing">
+                        Share location for community discovery
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="prayer_notifications" checked>
+                    <label class="form-check-label" for="prayer_notifications">
+                        Receive prayer request notifications
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="fas fa-question-circle"></i> Profile Tips</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Complete your profile to connect with like-minded believers
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Share your location to find local Christian communities
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Indicate mentorship preferences to find/offer guidance
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i>
+                        Add your spiritual gifts to serve effectively
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
